@@ -1,8 +1,6 @@
 import path from 'path'
-import util from 'util'
-var promisify = util.promisify
-import url from 'url'
-var URL = url.URL
+import { promisify } from 'util'
+import { URL } from 'url'
 import nodeResolveCb from 'resolve'
 var nodeResolve = promisify(nodeResolveCb)
 

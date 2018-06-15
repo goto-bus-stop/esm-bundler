@@ -1,10 +1,8 @@
-import util from 'util'
-var promisify = util.promisify
-import url from 'url'
-var URL = url.URL
+import { promisify } from 'util'
+import { URL } from 'url'
 import path from 'path'
-import fs from 'fs'
-var readFile = promisify(fs.readFile)
+import { readFile as readFileCb } from 'fs'
+var readFile = promisify(readFileCb)
 
 function load (url) {
   return readFile(url.pathname, 'utf8')
@@ -13,10 +11,18 @@ function load (url) {
 var translators = new Map()
 
 translators.set('builtin', async function (record) {
+  var name = new URL(record.url).pathname
+  var builtin = await import(name)
+  var exportsKeys = Object.keys(builtin)
   return {
     cacheKey: record.url,
     id: record.url,
-    source: 'export default import.meta.builtinRequire(' + JSON.stringify(new URL(record.url).pathname) + ')',
+    source:
+      'var builtin = import.meta.builtinRequire(' + JSON.stringify(name) + ');\n' +
+      exportsKeys.map(function (name) {
+        if (name === 'default') return 'export default builtin;'
+        return 'export var ' + name + ' = builtin.' + name + ';'
+      }).join('\n') + '\n',
   }
 })
 

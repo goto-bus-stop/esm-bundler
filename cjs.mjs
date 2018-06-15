@@ -1,5 +1,4 @@
-import util from 'util'
-var promisify = util.promisify
+import { promisify } from 'util'
 import browserify from 'browserify'
 
 export default function cjsBundler () {

@@ -1,7 +1,5 @@
-import url from 'url'
-var URL = url.URL
-import util from 'util'
-var promisify = util.promisify
+import { URL } from 'url'
+import { promisify } from 'util'
 import path from 'path'
 import acorn from 'acorn-node'
 import scan from 'scope-analyzer'
