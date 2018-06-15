@@ -12,6 +12,7 @@
     "browserify": "^16.2.0",
     "dash-ast": "^1.0.0",
     "identifierfy": "^1.1.1",
+    "minimist": "^1.2.0",
     "multisplice": "^1.0.0",
     "resolve": "^1.7.1",
     "scope-analyzer": "^2.0.3"
