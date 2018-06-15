@@ -28,6 +28,18 @@ esm-bundler /path/to/entry.mjs
 ES Modules files must have the `.mjs` extension, like in Node's current `--experimental-modules` implementation.
 CommonJS files are bundled using Browserify.
 
+## Features
+
+- [x] importing default and named from .mjs files
+- [x] exporting default from .mjs files
+- [ ] exporting named from .mjs files
+- [x] importing userland CommonJS code (default import == `module.exports`)
+- [x] importing default from builtins
+- [ ] importing named from builtins (https://nodejs.org/api/esm.html#esm_interop_with_existing_modules)
+- [ ] loader hooks (currently unsure if this is implemented well)
+- [ ] import.meta
+- [ ] dynamicInstantiate (unsure how to do this ahead of time :thinking:)
+
 ## License
 
 [Apache-2.0](LICENSE.md)
