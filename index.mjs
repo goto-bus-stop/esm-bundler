@@ -90,10 +90,12 @@ export default async function bundle (entry, opts) {
 
       // Resolve imports.
       var importMetaProps = {
-        url: module.meta.url
+        url: JSON.stringify(module.meta.url),
+        browserifyRequire: '__commonjsRequire__',
+        builtinRequire: 'require'
       }
       var usedImportMetaProps = new Set()
-      var importMetaName = '__importMeta_' + module.id
+      var importMetaName = identifierfy('__importMeta_' + module.id)
       dash(module.ast, function (node) {
         if (node.type !== 'MemberExpression') return
         var object = node.object
@@ -103,16 +105,12 @@ export default async function bundle (entry, opts) {
         }
       })
       if (usedImportMetaProps.size > 0) {
-        edit.splice(0, 0, 'var ' + importMetaName + ' = ' +
-          JSON.stringify(importMetaProps, function (key, value) {
-            if (key === '') return value
-            if (usedImportMetaProps.has(key)) {
-              return value
-            }
-            return undefined
-          }, '  ') +
-          ';\n'
-        )
+        var importMetaStr = 'var ' + importMetaName + ' = {'
+        usedImportMetaProps.forEach(function (name) {
+          importMetaStr += '\n  ' + name + ': ' + importMetaProps[name] + ','
+        })
+        importMetaStr += '\n};\n'
+        edit.splice(0, 0, importMetaStr)
       }
 
       // Rename global variables and imports.

@@ -16,7 +16,7 @@ translators.set('builtin', async function (record) {
   return {
     cacheKey: record.url,
     id: record.url,
-    source: 'export default require(' + JSON.stringify(new URL(record.url).pathname) + ')',
+    source: 'export default import.meta.builtinRequire(' + JSON.stringify(new URL(record.url).pathname) + ')',
   }
 })
 
@@ -27,7 +27,7 @@ translators.set('cjs', async function (record) {
     cacheKey: record.url,
     id: id,
     filename: filename,
-    source: 'export default __commonjsRequire__(' + JSON.stringify(id) + ')',
+    source: 'export default import.meta.browserifyRequire(' + JSON.stringify(id) + ')',
   }
 })
 
