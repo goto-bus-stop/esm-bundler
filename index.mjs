@@ -163,7 +163,7 @@ export default async function bundle (entry, opts) {
     recurse(module)
     function recurse (module) {
       var i = ordered.indexOf(module)
-      if (i !== -1) ordered.splice(i, 1)
+      if (i !== -1) return
       module.imports.forEach(function (imp) {
         recurse(modules.get(imp.resolved))
       })
