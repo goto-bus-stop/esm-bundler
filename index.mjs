@@ -7,6 +7,7 @@ import acorn from 'acorn-node'
 import scan from 'scope-analyzer'
 import multisplice from 'multisplice'
 import identifierfy from 'identifierfy'
+import dash from 'dash-ast'
 import detect from './detect.mjs'
 import * as defaultLoader from './default-loader.mjs'
 import translators from './translators.mjs'
@@ -64,6 +65,7 @@ export default async function bundle (entry, opts) {
     scan.crawl(ast)
     var m = detect(ast)
     Object.assign(module, {
+      meta: { url: record.url },
       ast: ast,
       imports: m.imports,
       exports: m.exports
@@ -85,6 +87,33 @@ export default async function bundle (entry, opts) {
       var edit = multisplice(module.source)
       var importBindings = new Set(module.imports.map(function (i) { return i.binding }))
       var imports = new Map(module.imports.map(function (i) { return [i.binding, i] }))
+
+      // Resolve imports.
+      var importMetaProps = {
+        url: module.meta.url
+      }
+      var usedImportMetaProps = new Set()
+      var importMetaName = '__importMeta_' + module.id
+      dash(module.ast, function (node) {
+        if (node.type !== 'MemberExpression') return
+        var object = node.object
+        if (object.type === 'MetaProperty' && object.meta.name === 'import' && object.property.name === 'meta') {
+          edit.splice(object.start, object.end, importMetaName)
+          usedImportMetaProps.add(node.property.name)
+        }
+      })
+      if (usedImportMetaProps.size > 0) {
+        edit.splice(0, 0, 'var ' + importMetaName + ' = ' +
+          JSON.stringify(importMetaProps, function (key, value) {
+            if (key === '') return value
+            if (usedImportMetaProps.has(key)) {
+              return value
+            }
+            return undefined
+          }, '  ') +
+          ';\n'
+        )
+      }
 
       // Rename global variables and imports.
       scope.bindings.forEach(function (binding) {

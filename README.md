@@ -37,7 +37,7 @@ CommonJS files are bundled using Browserify.
 - [x] importing default from builtins
 - [ ] importing named from builtins (https://nodejs.org/api/esm.html#esm_interop_with_existing_modules)
 - [ ] loader hooks (currently unsure if this is implemented well)
-- [ ] import.meta
+- [x] import.meta
 - [ ] dynamicInstantiate (unsure how to do this ahead of time :thinking:)
 
 ## License
